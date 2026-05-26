@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <title>Login screen</title>
+</head>
+<body>
+    <div class="registration">
+        <p style="font-weight: 600; font-size: 24px;">Вход в систему</p>
+
+        <div class="container">
+            <i class="fa-solid fa-user" aria-hidden="true"></i>
+            <input id="login-input" type="text" placeholder="Логин или Email" autocomplete="username">
+        </div>
+
+        <div class="container">
+            <i class="fa-solid fa-key" aria-hidden="true"></i>
+            <input id="password-input" type="password" placeholder="Пароль" autocomplete="current-password">
+        </div>
+
+        <p class="error-msg" id="error-msg"></p>
+
+        <button class="btn-primary" id="login-btn">Войти</button>
+
+        <div class="ifNoAcc">
+            <p>У вас ещё нет аккаунта? <a href="registration.html">Зарегистрируйтесь</a></p>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        // Уже вошёл — на дашборд
+        if (getAccessToken()) {
+            getMe().then(user => { if (user) window.location.href = 'dashboard.html'; });
+        }
+
+        document.getElementById('login-btn').addEventListener('click', handleLogin);
+        document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+
+        async function handleLogin() {
+            const loginVal = document.getElementById('login-input').value.trim();
+            const password = document.getElementById('password-input').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            errorMsg.textContent = '';
+
+            if (!loginVal || !password) {
+                errorMsg.textContent = 'Заполните все поля';
+                return;
+            }
+
+            try {
+                document.getElementById('login-btn').disabled = true;
+                await login(loginVal, password);
+                window.location.href = 'dashboard.html';
+            } catch (e) {
+                errorMsg.textContent = e.message;
+                document.getElementById('login-btn').disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

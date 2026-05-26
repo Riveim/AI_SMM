@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="sign-up">
+        <p style="font-size: 22px; font-weight: 600;">Регистрация аккаунта</p>
+
+        <div class="container">
+            <i class="fa-solid fa-user" aria-hidden="true"></i>
+            <input id="reg-login" type="text" placeholder="Логин" autocomplete="username">
+        </div>
+
+        <div class="container">
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            <input id="reg-email" type="email" placeholder="Email" autocomplete="email">
+        </div>
+
+        <div class="container">
+            <i class="fa-solid fa-key" aria-hidden="true"></i>
+            <input id="reg-password" type="password" placeholder="Пароль" autocomplete="new-password">
+        </div>
+
+        <div class="container">
+            <i class="fa-solid fa-key" aria-hidden="true"></i>
+            <input id="reg-password2" type="password" placeholder="Повторите пароль" autocomplete="new-password">
+        </div>
+
+        <p class="error-msg" id="error-msg"></p>
+        <p class="success-msg" id="success-msg"></p>
+
+        <button class="btn-primary" id="reg-btn">Зарегистрироваться</button>
+
+        <div class="ifNoAcc">
+            <p>Уже есть аккаунт? <a href="index.html">Войдите</a></p>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        document.getElementById('reg-btn').addEventListener('click', handleRegister);
+        document.addEventListener('keydown', e => { if (e.key === 'Enter') handleRegister(); });
+
+        async function handleRegister() {
+            const loginVal   = document.getElementById('reg-login').value.trim();
+            const email      = document.getElementById('reg-email').value.trim();
+            const password   = document.getElementById('reg-password').value;
+            const password2  = document.getElementById('reg-password2').value;
+            const errorMsg   = document.getElementById('error-msg');
+            const successMsg = document.getElementById('success-msg');
+
+            errorMsg.textContent   = '';
+            successMsg.textContent = '';
+
+            if (!loginVal || !email || !password || !password2) {
+                errorMsg.textContent = 'Заполните все поля';
+                return;
+            }
+
+            if (password !== password2) {
+                errorMsg.textContent = 'Пароли не совпадают';
+                return;
+            }
+
+            try {
+                document.getElementById('reg-btn').disabled = true;
+                await register(loginVal, email, password);
+                successMsg.textContent = 'Аккаунт создан! Перенаправляем...';
+                setTimeout(() => window.location.href = 'index.html', 1500);
+            } catch (e) {
+                errorMsg.textContent = e.message;
+                document.getElementById('reg-btn').disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
